@@ -20,7 +20,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
     # output = ""
     # with pyodbc.connect('DRIVER='+driver+';SERVER='+server+';PORT=1433;DATABASE='+database+';UID='+username+';PWD='+ password) as conn:
-    with pyodbc.connect(connectionString2):
+    with pyodbc.connect(connectionString2) as conn:
         # with conn.cursor() as cursor:
             # cursor.execute(f"SELECT VideoName, Event FROM {table}")
             # row = cursor.fetchone()
