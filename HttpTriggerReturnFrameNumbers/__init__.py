@@ -33,6 +33,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     frameCount = int(vidcap.get(cv2.CAP_PROP_FRAME_COUNT))
     logging.info('Video metadata acquired')
     logging.info(f"frameCount: {str(frameCount)}")
+
     ## If frame count negative, download locally and try again
     if frameCount <= 0:
         logging.info("Frame count greater than 0, so local download needed")
