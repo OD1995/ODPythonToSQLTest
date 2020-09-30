@@ -14,7 +14,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     logging.info(f"About to create txt file containing '{s}'")
     ## Create blob
     block_blob_service.create_blob_from_text(container_name="us-office",
-                                                blob_name=s,
-                                                text="test.txt")
+                                                blob_name="test.txt",
+                                                text=s)
     logging.info("Blob created")
     return func.HttpResponse(str(s))
