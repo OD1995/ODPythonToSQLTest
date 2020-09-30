@@ -1,6 +1,7 @@
 import logging
-import pyodbc
+import json
 import pandas as pd
+import pyodbc
 import azure.functions as func
 
 
@@ -30,5 +31,4 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
                 for vn,s,e in zip(df.VideoName,
                                     df.Sport,
                                     df.Event)}
-
-    return func.HttpResponse(str(dfDict))
+    return func.HttpResponse(json.dumps(dfDict))
