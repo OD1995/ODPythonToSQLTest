@@ -74,7 +74,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     ## Create BlockBlobService object to be used to upload blob to container
     block_blob_service = BlockBlobService(connection_string=connectionStringOutput)
     logging.info(f'BlockBlobService created for account "{block_blob_service.account_name}"')
-    ## Get names of all containers in the blob storage account
+    # Get names of all containers in the blob storage account
     containerNames = [x.name
                         for x in block_blob_service.list_containers()]
     ## Create container (will do nothing if container already exists)
@@ -88,24 +88,50 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
     vidcap = cv2.VideoCapture(fileURL)
     logging.info("VideoCapture object created")
     ## Loop through the frame numbers
-    for frameNumberName,frameNumber in enumerate(frameNumberList,1):
-        ## Create path to save image to
-        frameName = (5 - len(str(frameNumberName)))*"0" + str(frameNumberName)
-        imagePath = fr"{fileNameFolder}\{frameName}.jpeg"
-        ## Set the video to the correct frame
-        vidcap.set(cv2.CAP_PROP_POS_FRAMES,
-                    frameNumber)
-        ## Create the image
-        success,image = vidcap.read()
-        if success:
-            ## Encode image
-            success2, image2 = cv2.imencode(".jpeg", image)
-            if success2:
-                ## Convert image2 (numpy.ndarray) to bytes
-                byte_im = image2.tobytes() 
-                ## Create the new blob
-                block_blob_service.create_blob_from_bytes(container_name=containerOutput,
-                                                            blob_name=imagePath,
-                                                            blob=byte_im)
-    logging.info("Finished looping through frames")
+    frameNumberName = 1
+    frameNumber = frameNumberList[0]
+    for frameNumberName,frameNumber in enumerate(frameNumberList[:5],1):
+    ## Create path to save image to
+    frameName = (5 - len(str(frameNumberName)))*"0" + str(frameNumberName)
+    imagePath = fr"{fileNameFolder}\{frameName}.jpeg"
+    ## Set the video to the correct frame
+    vidcap.set(cv2.CAP_PROP_POS_FRAMES,
+                frameNumber)
+    logging.info(f"Video set to frame number: {frameNumber}")
+    ## Create the image
+    success,image = vidcap.read()
+    logging.info(f"Image read, success: {success}, `image` type: {type(image)}")
+    if success:
+        ## Encode image
+        success2, image2 = cv2.imencode(".jpeg", image)
+        logging.info(f"Image encoded, success2: {success2}, `image2` type: {type(image2)}")
+        if success2:
+            ## Convert image2 (numpy.ndarray) to bytes
+            byte_im = image2.tobytes()
+            logging.info("Image converted to bytes")
+            ## Create the new blob
+            block_blob_service.create_blob_from_bytes(container_name=containerOutput,
+                                                        blob_name=imagePath,
+                                                        blob=byte_im)
+            logging.info(f"Blob ({imagePath}) created....")
+    # for frameNumberName,frameNumber in enumerate(frameNumberList,1):
+    #     ## Create path to save image to
+    #     frameName = (5 - len(str(frameNumberName)))*"0" + str(frameNumberName)
+    #     imagePath = fr"{fileNameFolder}\{frameName}.jpeg"
+    #     ## Set the video to the correct frame
+    #     vidcap.set(cv2.CAP_PROP_POS_FRAMES,
+    #                 frameNumber)
+    #     ## Create the image
+    #     success,image = vidcap.read()
+    #     if success:
+    #         ## Encode image
+    #         success2, image2 = cv2.imencode(".jpeg", image)
+    #         if success2:
+    #             ## Convert image2 (numpy.ndarray) to bytes
+    #             byte_im = image2.tobytes() 
+    #             ## Create the new blob
+    #             block_blob_service.create_blob_from_bytes(container_name=containerOutput,
+    #                                                         blob_name=imagePath,
+    #                                                         blob=byte_im)
+    # logging.info("Finished looping through frames")
     return func.HttpResponse("I think it worked")
