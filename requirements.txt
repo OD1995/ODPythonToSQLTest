@@ -4,6 +4,7 @@
 
 azure-functions
 azure-storage-blob==1.5.0
+ffmpy==0.2.3
 opencv-python
 pandas
 pyodbc==4.0.30
